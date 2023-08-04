@@ -1,0 +1,36 @@
+/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,500;1,400&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Karla", sans-serif;
+  font-size: 18px;
+  position: relative;
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+@media (max-width: 600px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+.active {
+  border-bottom: 2px solid #00416a;
+}

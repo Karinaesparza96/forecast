@@ -1,0 +1,19 @@
+.search {
+  width: 400px; /* define a largura do campo */
+  position: relative;
+  margin: 0 auto;
+  .form-field {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+}
+
+.highcharts {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  margin-top: 30px;
+  width: 600px;
+}
