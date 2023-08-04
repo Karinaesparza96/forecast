@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { Observable, debounceTime, map, switchMap, startWith, of } from 'rxjs';
 import * as Highcharts from 'highcharts';
 import { Chart } from 'angular-highcharts';
-import { TemperatureData } from 'src/app/models/Forecast';
 
+import { Observable, debounceTime, map, switchMap, startWith, of, Subject, takeUntil } from 'rxjs';
+
+import { TemperatureData } from 'src/app/models/Forecast';
 import { Localidade } from 'src/app/models/LocalidadesBR';
 import { ForecastClimaService } from 'src/app/services/climatempo.service';
 
@@ -13,23 +14,33 @@ import { ForecastClimaService } from 'src/app/services/climatempo.service';
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
   constructor(private forecastClimaService: ForecastClimaService) { }
+
   localidades: Localidade[] = [];
   isHighcharts = typeof Highcharts === 'object';
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions?: Highcharts.Options;
+  destroy$ = new Subject<void>()
 
   lineChart!: Chart;
   searchControl: FormControl = new FormControl('');
   filteredOptions$?: Observable<Localidade[]>;
 
   ngOnInit(): void {
+    this.getLocalidades();
+    this.initFilteredOptions();
+  }
+
+  private getLocalidades(): void {
     this.forecastClimaService
       .getLocalizacao()
+      .pipe(takeUntil(this.destroy$))
       .subscribe((data) => (this.localidades = data));
+  }
+
+  private initFilteredOptions(): void {
     this.filteredOptions$ = this.searchControl.valueChanges.pipe(
       startWith('a'),
       debounceTime(400),
@@ -49,13 +60,13 @@ export class SearchComponent implements OnInit {
     const { latitude, longitude } = event.option.value;
     if (latitude && longitude) {
       this.forecastClimaService
-        .getForecast(latitude, longitude)
+        .getForecast(latitude, longitude).
+        pipe(takeUntil(this.destroy$))
         .subscribe((temperatureData: TemperatureData[]) => {
           let series = [];
           temperatureData.forEach(element => {
             series.push(element.serie)
           });
-          console.log(series)
           this.setChartOptions(series);
         });
     }
@@ -112,5 +123,9 @@ export class SearchComponent implements OnInit {
         return combineOptions;
       })
     );
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next()
+    this.destroy$.complete()
   }
 }
