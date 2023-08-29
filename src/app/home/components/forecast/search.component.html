@@ -1,33 +1,35 @@
-<div class="search">
-  <mat-form-field class="form-field">
-    <p>Previsão do tempo (7 dias)</p>
-    <input
-      type="text"
-      placeholder="Pesquisar por cidade..."
-      matInput
-      autofocus
-      [formControl]="searchControl"
-      [matAutocomplete]="auto"
-    />
-    <mat-autocomplete
-      autoActiveFirstOption
-      #auto="matAutocomplete"
-      [displayWith]="displayFn"
-      (optionSelected)="onSelectionChange($event)"
-    >
-      <mat-option
-        *ngFor="let option of filteredOptions$ | async"
-        [value]="option"
+<div class="wrapper">
+  <div class="search">
+    <mat-form-field class="form-field">
+      <p>Previsão do tempo (7 dias)</p>
+      <input
+        type="text"
+        placeholder="Pesquisar por cidade..."
+        matInput
+        autofocus
+        [formControl]="searchControl"
+        [matAutocomplete]="auto"
+      />
+      <mat-autocomplete
+        autoActiveFirstOption
+        #auto="matAutocomplete"
+        [displayWith]="displayFn"
+        (optionSelected)="onSelectionChange($event)"
       >
-        {{ option.localidade }}
-      </mat-option>
-    </mat-autocomplete>
-  </mat-form-field>
-</div>
-<div class="highcharts">
-  <highcharts-chart
-    *ngIf="chartOptions"
-    [Highcharts]="Highcharts"
-    [options]="chartOptions"
-  ></highcharts-chart>
+        <mat-option
+          *ngFor="let option of filteredOptions$ | async"
+          [value]="option"
+        >
+          {{ option.localidade }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+  <div class="highcharts">
+    <highcharts-chart
+      *ngIf="chartOptions"
+      [Highcharts]="Highcharts"
+      [options]="chartOptions"
+    ></highcharts-chart>
+  </div>
 </div>
